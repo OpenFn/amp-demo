@@ -25,10 +25,10 @@ each(
       ...file,
       blob: state.references[0],
     };
-    return axios.request(state.configuration.inboxUrl, {
-      method: "post",
-      data: data,
-    });
-    // return { ...state, data: data, references: [...state.references, data] };
+    // return axios.request(state.configuration.inboxUrl, {
+    //   method: "post",
+    //   data: data,
+    // });
+    return { ...state, data: data, references: [...state.references, data] };
   })
 );
