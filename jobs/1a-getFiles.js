@@ -1,29 +1,21 @@
 query(
-  "SELECT Title, Id, FirstPublishLocationId, IsLatest, FileExtension, FileType, PathOnClient, ContentModifiedDate, ContentUrl, Description, VersionData FROM ContentVersion WHERE (Title LIKE '%annual%' AND Title LIKE '%report%') OR (Title LIKE '%m&e%')"
+  `SELECT Title, Id, FirstPublishLocationId, IsLatest, FileExtension, FileType, PathOnClient, ContentModifiedDate, ContentUrl, Description, VersionData FROM ContentVersion WHERE ContentModifiedDate > ${state.lastModification} AND ((Title LIKE '%annual%' AND Title LIKE '%report%') OR (Title LIKE '%m&e%'))`
 );
+
 alterState(state => {
   const data = {
-    files: state.references[0].records
-      .filter(f => {
-        const { lastModification } = state;
-        if (lastModification) {
-          // Only return files that have been updated AFTER the last time we checked.
-          return f.ContentModifiedDate >= state.lastModification;
-        }
-        return true;
-      })
-      .map(f => ({
-        id: `${f.Id}/VersionData`,
-        lastModified: f.ContentModifiedDate,
-        fileName: f.Title,
-        fileExtension: f.FileExtension,
-        projectName: 'Breaking Barriers Karonga Project',
-        folderName:
-          f.Title.toLowerCase().includes('annual') &&
-          f.Title.toLowerCase().includes('report')
-            ? 'Annual Reports'
-            : 'M&E',
-      })),
+    files: state.references[0].records.map(f => ({
+      id: `${f.Id}/VersionData`,
+      lastModified: f.ContentModifiedDate,
+      fileName: f.Title,
+      fileExtension: f.FileExtension,
+      projectName: 'Breaking Barriers Karonga Project',
+      folderName:
+        f.Title.toLowerCase().includes('annual') &&
+        f.Title.toLowerCase().includes('report')
+          ? 'Annual Reports'
+          : 'M&E',
+    })),
   };
   return { ...state, data };
 });
