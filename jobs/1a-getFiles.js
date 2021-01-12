@@ -3,17 +3,25 @@ query(
 );
 alterState(state => {
   const data = {
-    files: state.references[0].records.map(i => ({
-      id: `${i.Id}/VersionData`,
-      fileName: i.Title,
-      fileExtension: i.FileExtension,
-      projectName: 'Breaking Barriers Karonga Project',
-      folderName:
-        i.Title.toLowerCase().includes('annual') &&
-        i.Title.toLowerCase().includes('report')
-          ? 'Annual Reports'
-          : 'M&E',
-    })),
+    files: state.references[0].records.filter(f => {
+      const { lastModification } = state;
+      if (lastModification) {
+        // Only return files that have been updated AFTER the last time we checked.
+        return f.ContentModifiedDate >= state.lastModification
+      }
+      return true;
+    })
+      .map(f => ({
+        id: `${f.Id}/VersionData`,
+        fileName: f.Title,
+        fileExtension: f.FileExtension,
+        projectName: 'Breaking Barriers Karonga Project',
+        folderName:
+          f.Title.toLowerCase().includes('annual') &&
+          f.Title.toLowerCase().includes('report')
+            ? 'Annual Reports'
+            : 'M&E',
+      })),
   };
   return { ...state, data };
 });
@@ -53,4 +61,8 @@ each(
   })
 );
 
-alterState(state => ({ ...state, references: [] }));
+alterState(state => {
+  // TODO: make this sort so that the last date shows up first.
+  const lastModification = state.data.sort((a, b) => b.ContentModifiedDate - a.ContentModifiedDate)[0];
+  return { ...state, lastModification, references: []}
+  );
