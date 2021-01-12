@@ -3,16 +3,18 @@ query(
 );
 alterState(state => {
   const data = {
-    files: state.references[0].records.filter(f => {
-      const { lastModification } = state;
-      if (lastModification) {
-        // Only return files that have been updated AFTER the last time we checked.
-        return f.ContentModifiedDate >= state.lastModification
-      }
-      return true;
-    })
+    files: state.references[0].records
+      .filter(f => {
+        const { lastModification } = state;
+        if (lastModification) {
+          // Only return files that have been updated AFTER the last time we checked.
+          return f.ContentModifiedDate >= state.lastModification;
+        }
+        return true;
+      })
       .map(f => ({
         id: `${f.Id}/VersionData`,
+        lastModified: f.ContentModifiedDate,
         fileName: f.Title,
         fileExtension: f.FileExtension,
         projectName: 'Breaking Barriers Karonga Project',
@@ -25,7 +27,8 @@ alterState(state => {
   };
   return { ...state, data };
 });
-each(
+
+beta.each(
   dataPath('files[*]'),
   retrieve('ContentVersion', dataValue('id'), state => {
     const file = state.data;
@@ -62,7 +65,10 @@ each(
 );
 
 alterState(state => {
+  console.log(state.data);
   // TODO: make this sort so that the last date shows up first.
-  const lastModification = state.data.sort((a, b) => b.ContentModifiedDate - a.ContentModifiedDate)[0];
-  return { ...state, lastModification, references: []}
-  );
+  const lastModification = state.data.files.sort(
+    (a, b) => b.lastModified - a.lastModified
+  )[0].lastModified;
+  return { ...state, lastModification, references: [] };
+});
