@@ -1,9 +1,11 @@
+// Here we check for newly updated files in Amp
 query(
   `SELECT Title, Id, FirstPublishLocationId, IsLatest, FileExtension, FileType, PathOnClient, ContentModifiedDate, ContentUrl, Description, VersionData FROM ContentVersion WHERE ContentModifiedDate > ${
     state.lastModification || '2021-01-01T00:00:00Z'
   } AND ((Title LIKE '%annual%' AND Title LIKE '%report%') OR (Title LIKE '%m&e%'))`
 );
 
+// Here we prepare some key information for the files.
 alterState(state => {
   const data = {
     files: state.references[0].records.map(f => ({
@@ -22,6 +24,7 @@ alterState(state => {
   return { ...state, data };
 });
 
+// Here we download each updated file and upsert it to Sharepoint
 beta.each(
   dataPath('files[*]'),
   retrieve('ContentVersion', dataValue('id'), state => {
@@ -58,9 +61,8 @@ beta.each(
   })
 );
 
+// Here, we set a cursor for use in the next run.
 alterState(state => {
-  console.log(state.data);
-  // TODO: make this sort so that the last date shows up first.
   const lastModification = state.data.files.sort().reverse()[0].lastModified;
   return { ...state, lastModification, references: [] };
 });
