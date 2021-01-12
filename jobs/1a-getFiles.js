@@ -61,8 +61,6 @@ beta.each(
 alterState(state => {
   console.log(state.data);
   // TODO: make this sort so that the last date shows up first.
-  const lastModification = state.data.files.sort(
-    (a, b) => b.lastModified - a.lastModified
-  )[0].lastModified;
+  const lastModification = state.data.files.sort().reverse()[0].lastModified;
   return { ...state, lastModification, references: [] };
 });
