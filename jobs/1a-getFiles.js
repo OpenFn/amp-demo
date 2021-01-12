@@ -1,5 +1,7 @@
 query(
-  `SELECT Title, Id, FirstPublishLocationId, IsLatest, FileExtension, FileType, PathOnClient, ContentModifiedDate, ContentUrl, Description, VersionData FROM ContentVersion WHERE ContentModifiedDate > ${state.lastModification} AND ((Title LIKE '%annual%' AND Title LIKE '%report%') OR (Title LIKE '%m&e%'))`
+  `SELECT Title, Id, FirstPublishLocationId, IsLatest, FileExtension, FileType, PathOnClient, ContentModifiedDate, ContentUrl, Description, VersionData FROM ContentVersion WHERE ContentModifiedDate > ${
+    state.lastModification || '2021-01-01T00:00:00Z'
+  } AND ((Title LIKE '%annual%' AND Title LIKE '%report%') OR (Title LIKE '%m&e%'))`
 );
 
 alterState(state => {
