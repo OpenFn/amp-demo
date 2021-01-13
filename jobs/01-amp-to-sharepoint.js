@@ -13,7 +13,7 @@ alterState(state => {
       lastModified: f.ContentModifiedDate,
       fileName: f.Title,
       fileExtension: f.FileExtension,
-      projectName: 'Breaking the Barriers Malawi',
+      projectName: 'Breaking Barriers Karonga Project',
       folderName:
         f.Title.toLowerCase().includes('annual') &&
         f.Title.toLowerCase().includes('report')
@@ -63,6 +63,6 @@ beta.each(
 
 // Here, we set a cursor for use in the next run.
 alterState(state => {
-  const lastModification = state.data.files.sort().reverse()[0]?.lastModified??'2021-01-01T00:00:00Z';
+  const lastModification = state.data.files.sort().reverse()[0].lastModified;
   return { ...state, lastModification, references: [] };
 });
