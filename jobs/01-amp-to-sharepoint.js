@@ -63,6 +63,10 @@ beta.each(
 
 // Here, we set a cursor for use in the next run.
 alterState(state => {
-  const lastModification = state.data.files.sort().reverse()[0].lastModified;
+  const lastModification =
+    state.data.files.length > 0
+      ? state.data.files.sort().reverse()[0].lastModified
+      : null;
+
   return { ...state, lastModification, references: [] };
 });
