@@ -13,7 +13,7 @@ alterState(state => {
       lastModified: f.ContentModifiedDate,
       fileName: f.Title,
       fileExtension: f.FileExtension,
-      projectName: 'Breaking Barriers Karonga Project',
+      projectName: 'Breaking the Barriers Malawi',
       folderName:
         f.Title.toLowerCase().includes('annual') &&
         f.Title.toLowerCase().includes('report')
